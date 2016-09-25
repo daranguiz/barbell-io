@@ -4,7 +4,7 @@ from datetime import datetime
 
 from app import app, db, lm, oid
 from .forms import LoginForm, EditForm, WilksForm
-from .models import User
+from .models import User, LiftEntry
 from .strong import compute_wilks
 
 
@@ -85,13 +85,18 @@ def user(nickname):
     if user == None:
         flash('User %s not found.' % nickname)
         return redirect(url_for('index'))
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
-    ]
+    exampleLift = LiftEntry(lift='barbell squat',
+                            bw=190,
+                            weight=405,
+                            reps=5,
+                            timestamp=datetime.utcnow(),
+                            user_id=user.id)
+    db.session.add(exampleLift)
+    db.session.commit()
+    lifts = user.lifts
     return render_template('user.html',
                            user=user,
-                           posts=posts)
+                           lifts=lifts)
 
 
 @app.route('/edit', methods=['GET', 'POST'])

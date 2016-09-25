@@ -19,7 +19,7 @@
     {% endif %}
     </p>
 </div>
-{% for post in posts.items %}
-    {% include 'post.html' %}
+{% for lift in lifts %}
+    <p><a href="{{url_for('user', nickname=lift.lifter.nickname)}}">{{lift.lifter.nickname}}</a> hit a {{ lift.weight }}x{{ lift.reps }} {{ lift.lift }} on {{lift.timestamp}}</p>
 {% endfor %}
 {% endblock %}

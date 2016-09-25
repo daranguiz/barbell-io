@@ -5,8 +5,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nickname = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
-    posts = db.relationship('Post', backref='author', lazy='dynamic')
     about_me = db.Column(db.String(140))
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
+    lifts = db.relationship('LiftEntry', backref='lifter', lazy='dynamic')
     last_seen = db.Column(db.DateTime)
 
     def avatar(self, size):
@@ -54,3 +55,15 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post %r>' % (self.body)
+
+class LiftEntry(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    lift = db.Column(db.String(128))
+    bw = db.Column(db.Float)
+    weight = db.Column(db.Float)
+    reps = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        return '<LiftEntry %dx%d %s>' % (self.weight, self.reps, self.name)
