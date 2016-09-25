@@ -1,0 +1,25 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+<div class="well well-large" style="height: 140px;">
+    <div class="pull-right">
+        <img src="{{user.avatar(128)}}" class="img-polaroid">
+    </div>
+    <h1>{{user.nickname}}</h1>
+    {% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
+    {% if user.last_seen %}<p><em>Last seen on: {{user.last_seen}}</em></p>{% endif %}
+    {% if user.id == g.user.id %}
+        <a href="{{url_for('edit')}}">Edit your profile</a>
+    {% elif not g.user.is_following(user) %}
+        <a href="{{url_for('follow', nickname = user.nickname)}}">Follow</a>
+    {% else %}
+        <a href="{{url_for('unfollow', nickname = user.nickname)}}">Unfollow</a>
+    {% endif %}
+    </p>
+</div>
+{% for post in posts.items %}
+    {% include 'post.html' %}
+{% endfor %}
+{% endblock %}
