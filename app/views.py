@@ -3,29 +3,22 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from datetime import datetime
 
 from app import app, db, lm, oid
-from .forms import LoginForm, EditForm
+from .forms import LoginForm, EditForm, WilksForm
 from .models import User
+from .strong import compute_wilks
 
 
-@app.route('/')
-@app.route('/index/')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index/', methods=['GET', 'POST'])
 @login_required
 def index():
-    user = g.user
-    posts = [  # fake array of posts
-        {
-            'author': {'nickname': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'nickname': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
+    form = WilksForm()
+    if form.validate_on_submit():
+        flash('You are very strong! Your Wilks score is %.2f.' % (compute_wilks(form)))
+        return redirect(url_for('index'))
     return render_template('index.html',
                            title='Home',
-                           user=user,
-                           posts=posts)
+                           form=form)
 
 
 @app.before_request

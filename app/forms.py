@@ -1,6 +1,6 @@
 from flask_wtf import Form
-from wtforms import StringField, BooleanField, TextAreaField
-from wtforms.validators import DataRequired, Length
+from wtforms import StringField, BooleanField, TextAreaField, RadioField, DecimalField
+from wtforms.validators import DataRequired, Length, Optional
 
 class LoginForm(Form):
     openid = StringField('openid', validators=[DataRequired()])
@@ -24,3 +24,12 @@ class EditForm(Form):
             self.nickname.errors.append('This nickname is already in use. Please choose another one.')
             return False
         return True
+
+class WilksForm(Form):
+    sex = RadioField('sex', choices=[('male','Male'), ('female','Female')], default='male', validators=[DataRequired()])
+    units = RadioField('units', choices=[('lb','Pounds'), ('kg','Kilograms')], default='lb', validators=[DataRequired()])
+    weight = DecimalField('weight', validators=[DataRequired()])
+    squat = DecimalField('squat', validators=[Optional()])
+    bench = DecimalField('bench', validators=[Optional()])
+    deadlift = DecimalField('deadlift', validators=[Optional()])
+
