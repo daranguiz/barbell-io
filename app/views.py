@@ -35,7 +35,7 @@ def track():
         db.session.commit()
         flash('Your lift has been saved!')
         return redirect(url_for('track'))
-    return render_template('track.html', form=form)
+    return render_template('track.html', form=form, title='Track')
 
 @app.before_request
 def before_request():
@@ -106,17 +106,18 @@ def user(nickname):
     # highchart stuff
     chart  = {"renderTo": 'chartID', "type": 'line', "height": 350,}
     series = [{"name": 'Label', "data": [lift.weight for lift in lifts]}]
-    title  = {"text": 'Squats'}
+    chartTitle  = {"text": 'Squats'}
     xAxis  = {"categories": ['xAxis ' + str(i) for i in range(lifts.count())]}
     yAxis  = {"title": {"text": 'yAxis Label'}}
 
     return render_template('user.html',
+                           title='Your Profile',
                            user=user,
                            lifts=lifts,
                            chartID='chartID',
                            chart=chart,
                            series=series,
-                           title=title,
+                           chartTitle=chartTitle,
                            xAxis=xAxis,
                            yAxis=yAxis)
 

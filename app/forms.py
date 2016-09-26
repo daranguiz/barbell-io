@@ -38,3 +38,4 @@ class TrackSetForm(Form):
     lift = StringField('lift', validators=[DataRequired()])
     weight = DecimalField('weight', validators=[DataRequired()])
     reps = IntegerField('reps', validators=[DataRequired()])
+    rpe = DecimalField('rpe')

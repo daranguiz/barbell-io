@@ -62,6 +62,7 @@ class LiftEntry(db.Model):
     bw = db.Column(db.Float)
     weight = db.Column(db.Float)
     reps = db.Column(db.Integer)
+    rpe = db.Column(db.Float)
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
