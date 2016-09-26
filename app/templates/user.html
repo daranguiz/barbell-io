@@ -22,4 +22,15 @@
 {% for lift in lifts %}
     <p><a href="{{url_for('user', nickname=lift.lifter.nickname)}}">{{lift.lifter.nickname}}</a> hit a {{ lift.weight }}x{{ lift.reps }} {{ lift.lift }} on {{lift.timestamp}}</p>
 {% endfor %}
+
+<div id={{ chartID|safe }} class="chart" style="height: 100px; width: 500px"></div>
+<script>
+    var chart_id = {{ chartID|safe }}
+    var series = {{ series|safe }}
+    var title = {{ title|safe }}
+    var xAxis = {{ xAxis|safe }}
+    var yAxis = {{ yAxis|safe }}
+    var chart = {{ chart|safe }}
+</script>
+
 {% endblock %}

@@ -102,9 +102,23 @@ def user(nickname):
         flash('User %s not found.' % nickname)
         return redirect(url_for('index'))
     lifts = user.lifts
+
+    # highchart stuff
+    chart  = {"renderTo": 'chartID', "type": 'line', "height": 350,}
+    series = [{"name": 'Label', "data": [lift.weight for lift in lifts]}]
+    title  = {"text": 'Squats'}
+    xAxis  = {"categories": ['xAxis ' + str(i) for i in range(lifts.count())]}
+    yAxis  = {"title": {"text": 'yAxis Label'}}
+
     return render_template('user.html',
                            user=user,
-                           lifts=lifts)
+                           lifts=lifts,
+                           chartID='chartID',
+                           chart=chart,
+                           series=series,
+                           title=title,
+                           xAxis=xAxis,
+                           yAxis=yAxis)
 
 
 @app.route('/edit', methods=['GET', 'POST'])
