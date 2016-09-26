@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import StringField, BooleanField, TextAreaField, RadioField, DecimalField
+from wtforms import StringField, BooleanField, TextAreaField, RadioField, DecimalField, IntegerField
 from wtforms.validators import DataRequired, Length, Optional
 
 class LoginForm(Form):
@@ -33,3 +33,8 @@ class WilksForm(Form):
     bench = DecimalField('bench', validators=[Optional()])
     deadlift = DecimalField('deadlift', validators=[Optional()])
 
+class TrackSetForm(Form):
+    bw = DecimalField('bw')
+    lift = StringField('lift', validators=[DataRequired()])
+    weight = DecimalField('weight', validators=[DataRequired()])
+    reps = IntegerField('reps', validators=[DataRequired()])

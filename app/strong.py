@@ -2,7 +2,7 @@ from decimal import *
 
 lb_to_kg = 0.453592
 
-def compute_wilks(wilksForm):
+def compute_wilks_from_form(wilksForm):
     bw = wilksForm.weight.data
 
     if wilksForm.sex.data == 'male':

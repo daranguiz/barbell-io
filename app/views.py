@@ -3,9 +3,9 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from datetime import datetime
 
 from app import app, db, lm, oid
-from .forms import LoginForm, EditForm, WilksForm
+from .forms import LoginForm, EditForm, WilksForm, TrackSetForm
 from .models import User, LiftEntry
-from .strong import compute_wilks
+from .strong import compute_wilks_from_form
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -14,12 +14,28 @@ from .strong import compute_wilks
 def index():
     form = WilksForm()
     if form.validate_on_submit():
-        flash('You are very strong! Your Wilks score is %.2f.' % (compute_wilks(form)))
+        flash('You are very strong! Your Wilks score is %.2f.' % (compute_wilks_from_form(form)))
         return redirect(url_for('index'))
     return render_template('index.html',
                            title='Home',
                            form=form)
 
+@app.route('/track', methods=['GET', 'POST'])
+@login_required
+def track():
+    form = TrackSetForm()
+    if form.validate_on_submit():
+        sampleLift = LiftEntry(lift=form.lift.data,
+                               bw=form.bw.data,
+                               weight=form.weight.data,
+                               reps=form.reps.data,
+                               timestamp=datetime.utcnow(),
+                               user_id=g.user.id)
+        db.session.add(sampleLift)
+        db.session.commit()
+        flash('Your lift has been saved!')
+        return redirect(url_for('track'))
+    return render_template('track.html', form=form)
 
 @app.before_request
 def before_request():
@@ -85,14 +101,6 @@ def user(nickname):
     if user == None:
         flash('User %s not found.' % nickname)
         return redirect(url_for('index'))
-    exampleLift = LiftEntry(lift='barbell squat',
-                            bw=190,
-                            weight=405,
-                            reps=5,
-                            timestamp=datetime.utcnow(),
-                            user_id=user.id)
-    db.session.add(exampleLift)
-    db.session.commit()
     lifts = user.lifts
     return render_template('user.html',
                            user=user,
