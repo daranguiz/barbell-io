@@ -1,6 +1,8 @@
 from flask_wtf import Form
-from wtforms import StringField, BooleanField, TextAreaField, RadioField, DecimalField, IntegerField
+from wtforms import StringField, BooleanField, TextAreaField, RadioField, DecimalField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Length, Optional
+
+from .strong import *
 
 class LoginForm(Form):
     openid = StringField('openid', validators=[DataRequired()])
@@ -35,7 +37,7 @@ class WilksForm(Form):
 
 class TrackSetForm(Form):
     bw = DecimalField('bw')
-    lift = StringField('lift', validators=[DataRequired()])
+    lift = SelectField('lift', choices=[(choice, choice) for choice in lift_choices], validators=[DataRequired()])
     weight = DecimalField('weight', validators=[DataRequired()])
     reps = IntegerField('reps', validators=[DataRequired()])
-    rpe = DecimalField('rpe')
+    rpe = DecimalField('rpe', validators=[Optional()])

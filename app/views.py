@@ -5,7 +5,7 @@ from datetime import datetime
 from app import app, db, lm, oid
 from .forms import LoginForm, EditForm, WilksForm, TrackSetForm
 from .models import User, LiftEntry
-from .strong import compute_wilks_from_form
+from .strong import *
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -25,13 +25,13 @@ def index():
 def track():
     form = TrackSetForm()
     if form.validate_on_submit():
-        sampleLift = LiftEntry(lift=form.lift.data,
-                               bw=form.bw.data,
-                               weight=form.weight.data,
-                               reps=form.reps.data,
-                               timestamp=datetime.utcnow(),
-                               user_id=g.user.id)
-        db.session.add(sampleLift)
+        newLiftEntry = LiftEntry(lift=form.lift.data,
+                                 bw=form.bw.data,
+                                 weight=form.weight.data,
+                                 reps=form.reps.data,
+                                 timestamp=datetime.utcnow(),
+                                 user_id=g.user.id)
+        db.session.add(newLiftEntry)
         db.session.commit()
         flash('Your lift has been saved!')
         return redirect(url_for('track'))
@@ -103,11 +103,14 @@ def user(nickname):
         return redirect(url_for('index'))
     lifts = user.lifts
 
+    # LiftEntry.query.delete()
+    # db.session.commit()
+
     # highchart stuff
     chart  = {"renderTo": 'chartID', "type": 'line', "height": 350,}
     series = [{"name": 'Label', "data": [lift.weight for lift in lifts]}]
-    chartTitle  = {"text": 'Squats'}
-    xAxis  = {"categories": ['xAxis ' + str(i) for i in range(lifts.count())]}
+    chartTitle = {"text": lift_choices[0]}
+    xAxis  = {"categories": [str(i) for i in range(lifts.count())]}
     yAxis  = {"title": {"text": 'yAxis Label'}}
 
     return render_template('user.html',

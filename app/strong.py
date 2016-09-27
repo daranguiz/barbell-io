@@ -2,6 +2,16 @@ from decimal import *
 
 lb_to_kg = 0.453592
 
+lift_choices = [
+    'Barbell Squat',
+    'Bench Press',
+    'Deadlift',
+    'Overhead Press',
+    'Upright Row',
+    'Pull Up',
+    'Dip'
+]
+
 def compute_wilks_from_form(wilksForm):
     bw = wilksForm.weight.data
 
