@@ -107,22 +107,26 @@ def user(nickname):
     # db.session.commit()
 
     # highchart stuff
-    chart  = {"renderTo": 'chartID', "type": 'line', "height": 350,}
-    series = [{"name": 'Label', "data": [lift.weight for lift in lifts]}]
-    chartTitle = {"text": lift_choices[0]}
-    xAxis  = {"categories": [str(i) for i in range(lifts.count())]}
-    yAxis  = {"title": {"text": 'yAxis Label'}}
+
+    charts = []
+    for idx, lift_choice in enumerate(lift_choices):
+        cur_lift = lifts.filter_by(lift=lift_choice)
+
+        cur_chart = {}
+        cur_chart['chartID'] = 'chart' + str(idx)
+        cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'line', "height": 350}
+        cur_chart['series'] = [{"name": 'Label', "data": [lift.weight for lift in cur_lift]}]
+        cur_chart['chartTitle'] = {"text": lift_choice}
+        cur_chart['xAxis'] = {"categories": [str(i) for i in range(cur_lift.count())]}
+        cur_chart['yAxis'] = {"title": {"text": 'Weight in lbs'}}
+
+        charts.append(cur_chart)
+
 
     return render_template('user.html',
                            title='Your Profile',
                            user=user,
-                           lifts=lifts,
-                           chartID='chartID',
-                           chart=chart,
-                           series=series,
-                           chartTitle=chartTitle,
-                           xAxis=xAxis,
-                           yAxis=yAxis)
+                           charts=charts)
 
 
 @app.route('/edit', methods=['GET', 'POST'])

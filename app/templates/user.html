@@ -23,14 +23,26 @@
     <p><a href="{{url_for('user', nickname=lift.lifter.nickname)}}">{{lift.lifter.nickname}}</a> hit a {{ lift.weight }}x{{ lift.reps }} {{ lift.lift }} on {{lift.timestamp}}</p>
 {% endfor %}
 
-<div id={{ chartID|safe }} class="chart" style="height: 100px; width: 500px"></div>
+{% for chart in charts %}
+    <!-- TODO: make these chart heights scale -->
+    <div id={{ chart['chartID']|safe }} class="chart" style="height: 400px; width: 500px"></div>
+{% endfor %}
+
 <script>
-    var chart_id = {{ chartID|safe }}
-    var series = {{ series|safe }}
-    var title = {{ chartTitle|safe }}
-    var xAxis = {{ xAxis|safe }}
-    var yAxis = {{ yAxis|safe }}
-    var chart = {{ chart|safe }}
+    var chart_id = []
+    var series = []
+    var title = []
+    var xAxis = []
+    var yAxis = []
+    var chart = []
+    {% for chart in charts %}
+        chart_id.push({{ chart['chartID']|safe }})
+        series.push({{ chart['series']|safe }})
+        title.push({{ chart['chartTitle']|safe }})
+        xAxis.push({{ chart['xAxis']|safe }})
+        yAxis.push({{ chart['yAxis']|safe }})
+        chart.push({{ chart['chart']|safe }})
+    {% endfor %}
 </script>
 
 {% endblock %}
