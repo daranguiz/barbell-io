@@ -88,7 +88,7 @@ def oauth(provider_name):
 
             return redirect(url_for('index'))
 
-        return render_template('login_oauth.html', result=result)
+        return render_template('login.html', result=result)
 
     return response
 
