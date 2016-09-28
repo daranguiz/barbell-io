@@ -3,6 +3,7 @@ from wtforms import StringField, BooleanField, TextAreaField, RadioField, Decima
 from wtforms.validators import DataRequired, Length, Optional
 
 from .strong import *
+from .models import User
 
 class LoginForm(Form):
     openid = StringField('openid', validators=[DataRequired()])
