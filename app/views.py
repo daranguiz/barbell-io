@@ -1,11 +1,18 @@
-from flask import render_template, flash, redirect, session, url_for, request, g
+from flask import render_template, make_response, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
+from authomatic.adapters import WerkzeugAdapter
+from authomatic import Authomatic
 from datetime import datetime
 
 from app import app, db, lm, oid
+from config import OAUTH_PROVIDERS
 from .forms import LoginForm, EditForm, WilksForm, TrackSetForm
 from .models import User, LiftEntry
 from .strong import *
+
+
+# Instantiate Authomatic.
+authomatic = Authomatic(OAUTH_PROVIDERS, 'your secret string', report_errors=False)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -37,56 +44,59 @@ def track():
         return redirect(url_for('track'))
     return render_template('track.html', form=form, title='Track')
 
+
 @app.before_request
 def before_request():
     g.user = current_user
+    print('Current user: ' + str(g.user))
     if g.user.is_authenticated:
         g.user.last_seen = datetime.utcnow()
         db.session.add(g.user)
         db.session.commit()
 
 
-@app.route('/login', methods=['GET', 'POST'])
-@oid.loginhandler
+@app.route('/login')
 def login():
-    if g.user is not None and g.user.is_authenticated:
-        return redirect(url_for('index'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        session['remember_me'] = form.remember_me.data
-        return oid.try_login(form.openid.data, ask_for=['nickname', 'email'])
-    return render_template('login.html',
-                           title='Sign In',
-                           form=form,
-                           providers=app.config['OPENID_PROVIDERS'])
+    return render_template('login.html')
 
 
-@oid.after_login
-def after_login(resp):
-    if resp.email is None or resp.email == "":
-        flash('Invalid login. Please try again.')
-        return redirect(url_for('login'))
-    user = User.query.filter_by(email=resp.email).first()
-    if user is None:
-        nickname = resp.nickname
-        if nickname is None or nickname == "":
-            nickname = resp.email.split('@')[0]
-        nickname = User.make_unique_nickname(nickname)
-        user = User(nickname = nickname, email = resp.email)
-        db.session.add(user)
-        db.session.commit()
-    remember_me = False
-    if 'remember_me' in session:
-        remember_me = session['remember_me']
-        session.pop('remember_me', None)
-    login_user(user, remember = remember_me)
-    return redirect(request.args.get('next') or url_for('index'))
+@app.route('/login/<provider_name>', methods=['GET', 'POST'])
+def oauth(provider_name):
+    response = make_response()
+    result = authomatic.login(WerkzeugAdapter(request, response), provider_name)
+
+    if result:
+        if result.user:
+            # authomatic
+            result.user.update()
+
+            # User.query.delete()
+            # db.session.commit()
+
+            # Check if this user has been seen before
+            user = User.query.filter_by(uid=result.user.id).first()
+
+            if user == None:
+                username = result.user.email.split('@')[0]
+                user = User(uid = result.user.id,
+                            username = username,
+                            email = result.user.email)
+                db.session.add(user)
+                db.session.commit()
+
+            login_user(user, remember=True)
+
+            return redirect(url_for('index'))
+
+        return render_template('login_oauth.html', result=result)
+
+    return response
 
 
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 
 @lm.user_loader
@@ -94,12 +104,12 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-@app.route('/user/<nickname>')
+@app.route('/user/<username>')
 @login_required
-def user(nickname):
-    user = User.query.filter_by(nickname=nickname).first()
+def user(username):
+    user = User.query.filter_by(username=username).first()
     if user == None:
-        flash('User %s not found.' % nickname)
+        flash('User %s not found.' % username)
         return redirect(url_for('index'))
     lifts = user.lifts
 
@@ -132,16 +142,16 @@ def user(nickname):
 @app.route('/edit', methods=['GET', 'POST'])
 @login_required
 def edit():
-    form = EditForm(g.user.nickname)
+    form = EditForm(g.user.username)
     if form.validate_on_submit():
-        g.user.nickname = form.nickname.data
+        g.user.username = form.username.data
         g.user.about_me = form.about_me.data
         db.session.add(g.user)
         db.session.commit()
         flash('Your changes have been saved.')
         return redirect(url_for('edit'))
     else:
-        form.nickname.data = g.user.nickname
+        form.username.data = g.user.username
         form.about_me.data = g.user.about_me
     return render_template('edit.html', form=form)
 

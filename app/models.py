@@ -3,27 +3,28 @@ from hashlib import md5
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nickname = db.Column(db.String(64), index=True, unique=True)
+    uid = db.Column(db.String, unique=True)
+    username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     about_me = db.Column(db.String(140))
+    last_seen = db.Column(db.DateTime)
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     lifts = db.relationship('LiftEntry', backref='lifter', lazy='dynamic')
-    last_seen = db.Column(db.DateTime)
 
     def avatar(self, size):
         return 'http://www.gravatar.com/avatar/%s?d=mm&s=%d' % (md5(self.email.encode('utf-8')).hexdigest(), size)
 
     @staticmethod
-    def make_unique_nickname(nickname):
-        if User.query.filter_by(nickname=nickname).first() is None:
-            return nickname
+    def make_unique_username(username):
+        if User.query.filter_by(username=username).first() is None:
+            return username
         version = 2
         while True:
-            new_nickname = nickname + str(version)
-            if User.query.filter_by(nickname=new_nickname).first() is None:
+            new_username = username + str(version)
+            if User.query.filter_by(username=new_username).first() is None:
                 break
             version += 1
-        return new_nickname
+        return new_username
 
     @property
     def is_authenticated(self):
@@ -44,7 +45,7 @@ class User(db.Model):
             return str(self.id)  # python 3
 
     def __repr__(self):
-        return '<User %r>' % (self.nickname)
+        return '<User %r>' % (self.username)
 
 
 class Post(db.Model):

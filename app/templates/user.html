@@ -7,20 +7,20 @@
     <div class="pull-right">
         <img src="{{user.avatar(128)}}" class="img-polaroid">
     </div>
-    <h1>{{user.nickname}}</h1>
+    <h1>{{user.username}}</h1>
     {% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
     {% if user.last_seen %}<p><em>Last seen on: {{user.last_seen}}</em></p>{% endif %}
     {% if user.id == g.user.id %}
         <a href="{{url_for('edit')}}">Edit your profile</a>
     {% elif not g.user.is_following(user) %}
-        <a href="{{url_for('follow', nickname = user.nickname)}}">Follow</a>
+        <a href="{{url_for('follow', username = user.username)}}">Follow</a>
     {% else %}
-        <a href="{{url_for('unfollow', nickname = user.nickname)}}">Unfollow</a>
+        <a href="{{url_for('unfollow', username = user.username)}}">Unfollow</a>
     {% endif %}
     </p>
 </div>
 {% for lift in lifts %}
-    <p><a href="{{url_for('user', nickname=lift.lifter.nickname)}}">{{lift.lifter.nickname}}</a> hit a {{ lift.weight }}x{{ lift.reps }} {{ lift.lift }} on {{lift.timestamp}}</p>
+    <p><a href="{{url_for('user', username=lift.lifter.username)}}">{{lift.lifter.username}}</a> hit a {{ lift.weight }}x{{ lift.reps }} {{ lift.lift }} on {{lift.timestamp}}</p>
 {% endfor %}
 
 {% for chart in charts %}

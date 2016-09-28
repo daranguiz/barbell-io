@@ -8,10 +8,10 @@
         {{ form.hidden_tag() }}
 
         <div class="control-group{% if form.errors.post %} error{% endif %}">
-            <label class="control-label" for="nickname">Your nickname:</label>
+            <label class="control-label" for="username">Your username:</label>
             <div class="controls">
-                {{ form.nickname(maxlength = 64, class = "span4") }}
-                {% for error in form.errors.nickname %}
+                {{ form.username(maxlength = 64, class = "span4") }}
+                {% for error in form.errors.username %}
                     <span class="help-inline">[{{error}}]</span><br>
                 {% endfor %}
             </div>

@@ -19,23 +19,23 @@ class TestCase(unittest.TestCase):
         db.drop_all()
 
     def test_avatar(self):
-        u = User(nickname='john', email='john@example.com')
+        u = User(username='john', email='john@example.com')
         avatar = u.avatar(128)
         expected = 'http://www.gravatar.com/avatar/d4c74594d841139328695756648b6bd6'
         assert avatar[0:len(expected)] == expected
 
-    def test_make_unique_nickname(self):
-        u = User(nickname='john', email='john@example.com')
+    def test_make_unique_username(self):
+        u = User(username='john', email='john@example.com')
         db.session.add(u)
         db.session.commit()
-        nickname = User.make_unique_nickname('john')
-        assert nickname != 'john'
-        u = User(nickname=nickname, email='susan@example.com')
+        username = User.make_unique_username('john')
+        assert username != 'john'
+        u = User(username=username, email='susan@example.com')
         db.session.add(u)
         db.session.commit()
-        nickname2 = User.make_unique_nickname('john')
-        assert nickname2 != 'john'
-        assert nickname2 != nickname
+        username2 = User.make_unique_username('john')
+        assert username2 != 'john'
+        assert username2 !=username
 
 if __name__ == '__main__':
     unittest.main()
