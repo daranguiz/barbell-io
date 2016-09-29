@@ -79,10 +79,13 @@ def oauth(provider_name):
             if user == None:
                 username = result.user.email.split('@')[0]
                 user = User(uid = result.user.id,
-                            username = username,
+                            username = User.make_unique_username(username),
                             email = result.user.email)
                 db.session.add(user)
                 db.session.commit()
+
+                login_user(user, remember=True)
+                return redirect(url_for('signup'))
 
             login_user(user, remember=True)
 
@@ -154,6 +157,23 @@ def edit():
         form.username.data = g.user.username
         form.about_me.data = g.user.about_me
     return render_template('edit.html', form=form)
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = EditForm(g.user.username)
+    if form.validate_on_submit():
+        g.user.username = form.username.data
+        g.user.about_me = form.about_me.data
+        db.session.add(g.user)
+        db.session.commit()
+        flash('Thanks for registering!')
+        return redirect(url_for('index'))
+    else:
+        form.username.data = g.user.username
+        form.about_me.data = g.user.about_me
+    return render_template('signup.html', form=form)
+
 
 @app.errorhandler(404)
 def not_found_error(error):

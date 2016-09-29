@@ -1,6 +1,6 @@
 from flask_wtf import Form
 from wtforms import StringField, BooleanField, TextAreaField, RadioField, DecimalField, IntegerField, SelectField
-from wtforms.validators import DataRequired, Length, Optional
+from wtforms.validators import DataRequired, Length, Optional, Regexp
 
 from .strong import *
 from .models import User
@@ -10,7 +10,7 @@ class LoginForm(Form):
     remember_me = BooleanField('remember_me', default=False)
 
 class EditForm(Form):
-    username = StringField('username', validators=[DataRequired()])
+    username = StringField('username', validators=[DataRequired(), Regexp('^\w+$')])
     about_me = TextAreaField('about_me', validators=[Length(min=0, max=140)])
 
     def __init__(self, original_username, *args, **kwargs):
