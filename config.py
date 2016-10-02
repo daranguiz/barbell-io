@@ -6,6 +6,11 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 WTF_CSRF_ENABLED = True
 SECRET_KEY = 'you-will-never-guess'
 
+
+# Facebook api workaround
+# https://github.com/peterhudec/authomatic/issues/130
+oauth2.Facebook.user_info_url = 'https://graph.facebook.com/v2.5/me?fields=email'
+
 OAUTH_PROVIDERS = {
 
     'tw': { # Your internal provider name
