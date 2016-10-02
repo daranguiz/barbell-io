@@ -108,8 +108,9 @@ def load_user(id):
 
 
 @app.route('/user/<username>')
+@app.route('/user/<username>/home')
 @login_required
-def user(username):
+def user_home(username):
     user = User.query.filter_by(username=username).first()
     if user == None:
         flash('User %s not found.' % username)
@@ -136,10 +137,34 @@ def user(username):
         charts.append(cur_chart)
 
 
-    return render_template('user.html',
+    return render_template('user_home.html',
                            title='Your Profile',
                            user=user,
                            charts=charts)
+
+@app.route('/user/<username>/placeholder1')
+@login_required
+def user_placeholder1(username):
+    user = User.query.filter_by(username=username).first()
+    if user == None:
+        flash('User %s not found.' % username)
+        return redirect(url_for('index'))
+
+    return render_template('user_placeholder1.html',
+                           title='Placeholder 1',
+                           user=user)
+
+@app.route('/user/<username>/placeholder2')
+@login_required
+def user_placeholder2(username):
+    user = User.query.filter_by(username=username).first()
+    if user == None:
+        flash('User %s not found.' % username)
+        return redirect(url_for('index'))
+
+    return render_template('user_placeholder2.html',
+                           title='Placeholder 2',
+                           user=user)
 
 
 @app.route('/edit', methods=['GET', 'POST'])

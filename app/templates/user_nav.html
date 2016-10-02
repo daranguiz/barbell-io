@@ -1,0 +1,23 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'flash.html' %}
+
+{% set navigation_bar = [
+    (url_for('user_home', username=user.username), 'dashboard', 'Dashboard'),
+    (url_for('user_placeholder1', username=user.username), 'placeholder1', 'Placeholder 1'),
+    (url_for('user_placeholder2', username=user.username), 'placeholder2', 'Placeholder 2')
+] %}
+
+{% set active_page = active_page|default('dashboard') %}
+
+<ul id="user_navbar" class="nav nav-tabs">
+    {% for href, id, caption in navigation_bar %}
+    <li{% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}">{{ caption|e }}</a></li>
+    {% endfor %}
+</ul>
+
+{% block user_content %}{% endblock %}
+
+{% endblock %}

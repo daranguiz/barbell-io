@@ -1,8 +1,10 @@
-<!-- extend base layout -->
-{% extends "base.html" %}
+<!-- extend user_nav layout -->
+{% extends "user_nav.html" %}
+{% set active_page = "dashboard" %}
 
-{% block content %}
+{% block user_content %}
 {% include 'flash.html' %}
+
 <div class="well well-large" style="height: 140px;">
     <div class="pull-right">
         <img src="{{user.avatar(128)}}" class="img-polaroid">
