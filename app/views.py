@@ -116,6 +116,7 @@ def user_home(username):
         flash('User %s not found.' % username)
         return redirect(url_for('index'))
     lifts = user.lifts
+    units = user.units
 
     # LiftEntry.query.delete()
     # db.session.commit()
@@ -133,7 +134,7 @@ def user_home(username):
             cur_chart['series'] = [{"name": 'Label', "data": [lift.weight for lift in cur_lift]}]
             cur_chart['chartTitle'] = {"text": lift_choice}
             cur_chart['xAxis'] = {"categories": [str(i) for i in range(cur_lift.count())]}
-            cur_chart['yAxis'] = {"title": {"text": 'Weight in lbs'}}
+            cur_chart['yAxis'] = {"title": {"text": 'Weight in ' + units}}
 
             charts.append(cur_chart)
 
