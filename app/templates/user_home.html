@@ -25,10 +25,12 @@
     <p><a href="{{url_for('user', username=lift.lifter.username)}}">{{lift.lifter.username}}</a> hit a {{ lift.weight }}x{{ lift.reps }} {{ lift.lift }} on {{lift.timestamp}}</p>
 {% endfor %}
 
+<!-- <div class="row-fluid"> -->
 {% for chart in charts %}
     <!-- TODO: make these chart heights scale -->
-    <div id={{ chart['chartID']|safe }} class="chart" style="height: 400px; width: 500px"></div>
+    <div id={{ chart['chartID']|safe }} class="chart"></div>
 {% endfor %}
+<!-- </div> -->
 
 <script>
     var chart_id = []
