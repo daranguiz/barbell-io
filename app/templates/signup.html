@@ -18,6 +18,15 @@
             </div>
         </div>
         <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="units">Preferred units:</label>
+            <div class="controls">
+                {{ form.units(class = "span4") }}
+                {% for error in form.errors.units %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
             <label class="control-label" for="about_me">About yourself:</label>
             <div class="controls">
                 {{ form.about_me(cols = 64, rows = 4, class = "span4") }}

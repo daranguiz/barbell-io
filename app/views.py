@@ -176,9 +176,11 @@ def user_settings(username):
         flash('User %s not found.' % username)
         return redirect(url_for('index'))
 
+    # TODO: This form is used in multiple places, should be a function
     form = EditForm(g.user.username)
     if form.validate_on_submit():
         g.user.username = form.username.data
+        g.user.units = form.units.data
         g.user.about_me = form.about_me.data
         db.session.add(g.user)
         db.session.commit()
@@ -186,6 +188,7 @@ def user_settings(username):
         return redirect(url_for('user_settings', username=g.user.username))
     else:
         form.username.data = g.user.username
+        form.units.data = g.user.units
         form.about_me.data = g.user.about_me
 
     return render_template('user_settings.html',
@@ -194,28 +197,13 @@ def user_settings(username):
                            form=form)
 
 
-@app.route('/edit', methods=['GET', 'POST'])
-@login_required
-def edit():
-    form = EditForm(g.user.username)
-    if form.validate_on_submit():
-        g.user.username = form.username.data
-        g.user.about_me = form.about_me.data
-        db.session.add(g.user)
-        db.session.commit()
-        flash('Your changes have been saved.')
-        return redirect(url_for('edit'))
-    else:
-        form.username.data = g.user.username
-        form.about_me.data = g.user.about_me
-    return render_template('edit.html', form=form)
-
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = EditForm(g.user.username)
     if form.validate_on_submit():
         g.user.username = form.username.data
+        g.user.units = form.units.data
         g.user.about_me = form.about_me.data
         db.session.add(g.user)
         db.session.commit()
@@ -223,6 +211,7 @@ def signup():
         return redirect(url_for('index'))
     else:
         form.username.data = g.user.username
+        form.units.data = g.user.units
         form.about_me.data = g.user.about_me
     return render_template('signup.html', form=form)
 
