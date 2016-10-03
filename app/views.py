@@ -3,6 +3,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from authomatic.adapters import WerkzeugAdapter
 from authomatic import Authomatic
 from datetime import datetime
+from sqlalchemy import asc, desc
 
 from app import app, db, lm, oid
 from config import OAUTH_PROVIDERS
@@ -155,17 +156,41 @@ def user_analytics(username):
     lifts = user.lifts
     units = user.units
 
+    # 1RM
     charts = []
     for idx, lift_choice in enumerate(lift_choices):
         cur_lift = lifts.filter_by(lift=lift_choice)
 
         if cur_lift.count() > 0:
             cur_chart = {}
-            cur_chart['chartID'] = 'chart' + str(idx)
+            cur_chart['chartID'] = 'chart_1rm' + str(idx)
             cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'spline'}
             cur_chart['series'] = [{"name": 'Weight', "data": [estimate_1rm_epley(lift.weight, lift.reps) for lift in cur_lift]}]
             cur_chart['chartTitle'] = {"text": "Estimated 1RM: " + lift_choice}
             cur_chart['xAxis'] = {"categories": [str(i) for i in range(cur_lift.count())]}
+            cur_chart['yAxis'] = {"title": {"text": 'Weight in ' + units}}
+
+            charts.append(cur_chart)
+
+    # Volume by day
+    for idx, lift_choice in enumerate(lift_choices):
+        cur_lift = lifts.filter_by(lift=lift_choice).order_by(asc(LiftEntry.timestamp))
+
+        if cur_lift.count() > 0:
+            oldest_date = cur_lift[0].timestamp.date().toordinal()
+            cur_date = datetime.utcnow().date().toordinal()
+            volume = [0 for i in range(cur_date - oldest_date + 1)]
+
+            for lift in cur_lift:
+                day_idx = lift.timestamp.date().toordinal() - oldest_date
+                volume[day_idx] += lift.weight
+
+            cur_chart = {}
+            cur_chart['chartID'] = 'chart_volume' + str(idx)
+            cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'column'}
+            cur_chart['series'] = [{"name": 'Weight', "data": volume}]
+            cur_chart['chartTitle'] = {"text": "Volume by day: " + lift_choice}
+            cur_chart['xAxis'] = {"categories": ['D ' + str(i) for i in range(len(volume))]}
             cur_chart['yAxis'] = {"title": {"text": 'Weight in ' + units}}
 
             charts.append(cur_chart)

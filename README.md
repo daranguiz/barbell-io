@@ -22,6 +22,7 @@ See [issues](https://github.com/daranguiz/barbell-io/issues) for more up-to-date
 ### TODO Analytics
 
 - [ ] Historic volume compared to average
+- [ ] Volume per day with stacked bar chart for squat/bench/dead-related lifts
 - [ ] Historic RPE comparisons (how much of your time are you maxing vs 70% etc)
 - [ ] PR table
 - [ ] Percentage volume by core lift
