@@ -182,6 +182,7 @@ def user_settings(username):
     if form.validate_on_submit():
         g.user.username = form.username.data
         g.user.units = form.units.data
+        g.user.sex = form.sex.data
         g.user.about_me = form.about_me.data
         db.session.add(g.user)
         db.session.commit()
@@ -190,6 +191,7 @@ def user_settings(username):
     else:
         form.username.data = g.user.username
         form.units.data = g.user.units
+        form.sex.data = g.user.sex
         form.about_me.data = g.user.about_me
 
     return render_template('user_settings.html',
@@ -205,6 +207,7 @@ def signup():
     if form.validate_on_submit():
         g.user.username = form.username.data
         g.user.units = form.units.data
+        g.user.sex = form.sex.data
         g.user.about_me = form.about_me.data
         db.session.add(g.user)
         db.session.commit()
@@ -213,6 +216,7 @@ def signup():
     else:
         form.username.data = g.user.username
         form.units.data = g.user.units
+        form.sex.data = g.user.sex
         form.about_me.data = g.user.about_me
     return render_template('signup.html', form=form)
 

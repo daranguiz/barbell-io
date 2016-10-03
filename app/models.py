@@ -8,7 +8,8 @@ class User(db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime)
-    units = db.Column(db.String(3))
+    units = db.Column(db.String) # TODO: len
+    sex = db.Column(db.String)   # TODO: len
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     lifts = db.relationship('LiftEntry', backref='lifter', lazy='dynamic')
 

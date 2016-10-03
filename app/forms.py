@@ -12,6 +12,7 @@ class LoginForm(Form):
 class EditForm(Form):
     username = StringField('username', validators=[Length(min=3, max=64), DataRequired(), Regexp('^\w+$')])
     units = RadioField('units', choices=[('lbs','Pounds'), ('kgs','Kilograms')], default='lb', validators=[DataRequired()])
+    sex = RadioField('sex', choices=[('male','Male'), ('female','Female')], default='male', validators=[DataRequired()])
     about_me = TextAreaField('about_me', validators=[Length(min=0, max=140)])
 
     def __init__(self, original_username, *args, **kwargs):
