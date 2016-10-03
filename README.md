@@ -16,6 +16,7 @@ To run, you need [python3](https://docs.python.org/3/). Install dependencies via
 - [ ] Social: search for friends via Facebook, see their progress
 - [ ] Frontend: we can do better than default boostrap styling
 - [ ] Deployment: get this bad boy online
+- [ ] Templatize warmup input and allow to include/exclude from volume analytics
 
 See [issues](https://github.com/daranguiz/barbell-io/issues) for more up-to-date todo.
 
