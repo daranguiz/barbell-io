@@ -1,0 +1,37 @@
+<!-- extend user_nav layout -->
+{% extends "user_nav.html" %}
+{% set active_page = "settings" %}
+
+{% block user_content %}
+
+<div class="well">
+    <form class="form-horizontal" action="" method="post" name="edit">
+        {{ form.hidden_tag() }}
+
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="username">Your username:</label>
+            <div class="controls">
+                {{ form.username(maxlength = 64, class = "span4") }}
+                {% for error in form.errors.username %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="control-group{% if form.errors.post %} error{% endif %}">
+            <label class="control-label" for="about_me">About yourself:</label>
+            <div class="controls">
+                {{ form.about_me(cols = 64, rows = 4, class = "span4") }}
+                {% for error in form.errors.about_me %}
+                    <span class="help-inline">[{{error}}]</span><br>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn btn-primary" type="submit" value="Save Changes">
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

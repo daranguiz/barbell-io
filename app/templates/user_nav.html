@@ -7,7 +7,8 @@
 {% set navigation_bar = [
     (url_for('user_home', username=user.username), 'dashboard', 'Dashboard'),
     (url_for('user_placeholder1', username=user.username), 'placeholder1', 'Placeholder 1'),
-    (url_for('user_placeholder2', username=user.username), 'placeholder2', 'Placeholder 2')
+    (url_for('user_placeholder2', username=user.username), 'placeholder2', 'Placeholder 2'),
+    (url_for('user_settings', username=user.username), 'settings', 'Settings')
 ] %}
 
 {% set active_page = active_page|default('dashboard') %}

@@ -167,6 +167,32 @@ def user_placeholder2(username):
                            title='Placeholder 2',
                            user=user)
 
+@app.route('/user/<username>/settings', methods=['GET', 'POST'])
+@login_required
+def user_settings(username):
+    # TODO: is this necessary?
+    user = User.query.filter_by(username=username).first()
+    if user == None:
+        flash('User %s not found.' % username)
+        return redirect(url_for('index'))
+
+    form = EditForm(g.user.username)
+    if form.validate_on_submit():
+        g.user.username = form.username.data
+        g.user.about_me = form.about_me.data
+        db.session.add(g.user)
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('user_settings', username=g.user.username))
+    else:
+        form.username.data = g.user.username
+        form.about_me.data = g.user.about_me
+
+    return render_template('user_settings.html',
+                           title='Settings',
+                           user=user,
+                           form=form)
+
 
 @app.route('/edit', methods=['GET', 'POST'])
 @login_required
