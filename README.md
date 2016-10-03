@@ -17,3 +17,4 @@ To run, you need [python3](https://docs.python.org/3/). Install dependencies via
 - [ ] Frontend: we can do better than default boostrap styling
 - [ ] Deployment: get this bad boy online
 
+See [issues](https://github.com/daranguiz/barbell-io/issues) for more up-to-date todo. 
