@@ -129,7 +129,7 @@ def user_home(username):
         if cur_lift.count() > 0:
             cur_chart = {}
             cur_chart['chartID'] = 'chart' + str(idx)
-            cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'line', "height": 350}
+            cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'spline'}
             cur_chart['series'] = [{"name": 'Label', "data": [lift.weight for lift in cur_lift]}]
             cur_chart['chartTitle'] = {"text": lift_choice}
             cur_chart['xAxis'] = {"categories": [str(i) for i in range(cur_lift.count())]}

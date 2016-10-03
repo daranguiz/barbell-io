@@ -25,15 +25,13 @@
     <p><a href="{{url_for('user', username=lift.lifter.username)}}">{{lift.lifter.username}}</a> hit a {{ lift.weight }}x{{ lift.reps }} {{ lift.lift }} on {{lift.timestamp}}</p>
 {% endfor %}
 
-<!-- <div class="row-fluid"> -->
 {% for chart in charts %}
-    <div class="row">
+    <div class="row-fluid">
     <div class = "span10 offset1">
         <div id={{ chart['chartID']|safe }} class="chart"></div>
     </div>
     </div>
 {% endfor %}
-<!-- </div> -->
 
 <script>
     var chart_id = []
