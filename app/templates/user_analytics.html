@@ -1,0 +1,33 @@
+<!-- extend user_nav layout -->
+{% extends "user_nav.html" %}
+{% set active_page = "analytics" %}
+
+{% block user_content %}
+
+{% for chart in charts %}
+    <div class="row-fluid">
+    <div class = "span10 offset1">
+        <div id={{ chart['chartID']|safe }} class="chart"></div>
+    </div>
+    </div>
+{% endfor %}
+
+<script>
+    var chart_id = []
+    var series = []
+    var title = []
+    var xAxis = []
+    var yAxis = []
+    var chart = []
+    {% for chart in charts %}
+        chart_id.push({{ chart['chartID']|safe }})
+        series.push({{ chart['series']|safe }})
+        title.push({{ chart['chartTitle']|safe }})
+        xAxis.push({{ chart['xAxis']|safe }})
+        yAxis.push({{ chart['yAxis']|safe }})
+        chart.push({{ chart['chart']|safe }})
+    {% endfor %}
+</script>
+
+
+{% endblock %}

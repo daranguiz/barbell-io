@@ -10,7 +10,7 @@ To run, you need [python3](https://docs.python.org/3/). Install dependencies via
 
 ## TODO
 
-- [ ] Historic 1RM estimation chart
+- [x] Historic 1RM estimation chart
 - [ ] Historic wilks estimation chart
 - [ ] Historic volume chart
 - [ ] Social: search for friends via Facebook, see their progress

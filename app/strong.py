@@ -1,4 +1,5 @@
 from decimal import *
+from math import floor
 
 lb_to_kg = 0.453592
 
@@ -45,3 +46,11 @@ def compute_wilks_from_form(wilksForm):
     weight_coef = Decimal(500) / (a + b * bw + c * bw**2 + d * bw**3 + e * bw**4 + f * bw**5)
 
     return weight_coef * total
+
+def estimate_1rm_epley(weight, reps):
+    return floor(weight * (1 + reps / 30.0))
+
+def estimate_1rm_brzycki(weight, reps):
+    return floor(weight * 36.0 / (37.0 - reps))
+
+

@@ -131,7 +131,7 @@ def user_home(username):
             cur_chart = {}
             cur_chart['chartID'] = 'chart' + str(idx)
             cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'spline'}
-            cur_chart['series'] = [{"name": 'Label', "data": [lift.weight for lift in cur_lift]}]
+            cur_chart['series'] = [{"name": 'Weight', "data": [lift.weight for lift in cur_lift]}]
             cur_chart['chartTitle'] = {"text": lift_choice}
             cur_chart['xAxis'] = {"categories": [str(i) for i in range(cur_lift.count())]}
             cur_chart['yAxis'] = {"title": {"text": 'Weight in ' + units}}
@@ -144,17 +144,36 @@ def user_home(username):
                            user=user,
                            charts=charts)
 
-@app.route('/user/<username>/placeholder1')
+@app.route('/user/<username>/analytics')
 @login_required
-def user_placeholder1(username):
+def user_analytics(username):
     user = User.query.filter_by(username=username).first()
     if user == None:
         flash('User %s not found.' % username)
         return redirect(url_for('index'))
 
-    return render_template('user_placeholder1.html',
-                           title='Placeholder 1',
-                           user=user)
+    lifts = user.lifts
+    units = user.units
+
+    charts = []
+    for idx, lift_choice in enumerate(lift_choices):
+        cur_lift = lifts.filter_by(lift=lift_choice)
+
+        if cur_lift.count() > 0:
+            cur_chart = {}
+            cur_chart['chartID'] = 'chart' + str(idx)
+            cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'spline'}
+            cur_chart['series'] = [{"name": 'Weight', "data": [estimate_1rm_epley(lift.weight, lift.reps) for lift in cur_lift]}]
+            cur_chart['chartTitle'] = {"text": "Estimated 1RM: " + lift_choice}
+            cur_chart['xAxis'] = {"categories": [str(i) for i in range(cur_lift.count())]}
+            cur_chart['yAxis'] = {"title": {"text": 'Weight in ' + units}}
+
+            charts.append(cur_chart)
+
+    return render_template('user_analytics.html',
+                           title='Analytics',
+                           user=user,
+                           charts=charts)
 
 @app.route('/user/<username>/placeholder2')
 @login_required
