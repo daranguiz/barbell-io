@@ -17,4 +17,12 @@ To run, you need [python3](https://docs.python.org/3/). Install dependencies via
 - [ ] Frontend: we can do better than default boostrap styling
 - [ ] Deployment: get this bad boy online
 
-See [issues](https://github.com/daranguiz/barbell-io/issues) for more up-to-date todo. 
+See [issues](https://github.com/daranguiz/barbell-io/issues) for more up-to-date todo.
+
+### TODO Analytics
+
+- [ ] Historic volume compared to average
+- [ ] Historic RPE comparisons (how much of your time are you maxing vs 70% etc)
+- [ ] PR table
+- [ ] Percentage volume by core lift
+- [ ] Other volume comparisons (brainstorm)
