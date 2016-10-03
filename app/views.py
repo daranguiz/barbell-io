@@ -126,15 +126,16 @@ def user_home(username):
     for idx, lift_choice in enumerate(lift_choices):
         cur_lift = lifts.filter_by(lift=lift_choice)
 
-        cur_chart = {}
-        cur_chart['chartID'] = 'chart' + str(idx)
-        cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'line', "height": 350}
-        cur_chart['series'] = [{"name": 'Label', "data": [lift.weight for lift in cur_lift]}]
-        cur_chart['chartTitle'] = {"text": lift_choice}
-        cur_chart['xAxis'] = {"categories": [str(i) for i in range(cur_lift.count())]}
-        cur_chart['yAxis'] = {"title": {"text": 'Weight in lbs'}}
+        if cur_lift.count() > 0:
+            cur_chart = {}
+            cur_chart['chartID'] = 'chart' + str(idx)
+            cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'line', "height": 350}
+            cur_chart['series'] = [{"name": 'Label', "data": [lift.weight for lift in cur_lift]}]
+            cur_chart['chartTitle'] = {"text": lift_choice}
+            cur_chart['xAxis'] = {"categories": [str(i) for i in range(cur_lift.count())]}
+            cur_chart['yAxis'] = {"title": {"text": 'Weight in lbs'}}
 
-        charts.append(cur_chart)
+            charts.append(cur_chart)
 
 
     return render_template('user_home.html',

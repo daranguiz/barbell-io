@@ -27,8 +27,11 @@
 
 <!-- <div class="row-fluid"> -->
 {% for chart in charts %}
-    <!-- TODO: make these chart heights scale -->
-    <div id={{ chart['chartID']|safe }} class="chart"></div>
+    <div class="row">
+    <div class = "span10 offset1">
+        <div id={{ chart['chartID']|safe }} class="chart"></div>
+    </div>
+    </div>
 {% endfor %}
 <!-- </div> -->
 
