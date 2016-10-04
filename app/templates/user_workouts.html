@@ -1,0 +1,16 @@
+<!-- extend user_nav layout -->
+{% extends "user_nav.html" %}
+{% set active_page = "workouts" %}
+
+{% block user_content %}
+
+<!-- TODO: change to glyphicon-edit and glyphicon-delete -->
+{% for lift in lifts %}
+    <div>
+        <a href="#">delete</a>
+        <a href="#">edit</a>
+        {{ lift.weight }}x{{ lift.reps }} {{ lift.lift}}
+    </div>
+{% endfor %}
+
+{% endblock %}

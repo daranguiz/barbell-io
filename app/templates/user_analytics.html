@@ -18,6 +18,7 @@
     var title = []
     var xAxis = []
     var yAxis = []
+    var plotOptions = []
     var chart = []
     {% for chart in charts %}
         chart_id.push({{ chart['chartID']|safe }})
@@ -25,6 +26,7 @@
         title.push({{ chart['chartTitle']|safe }})
         xAxis.push({{ chart['xAxis']|safe }})
         yAxis.push({{ chart['yAxis']|safe }})
+        plotOptions.push({{ chart['plotOptions']|safe }})
         chart.push({{ chart['chart']|safe }})
     {% endfor %}
 </script>

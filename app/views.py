@@ -3,7 +3,8 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from authomatic.adapters import WerkzeugAdapter
 from authomatic import Authomatic
 from datetime import datetime
-from sqlalchemy import asc, desc
+from sqlalchemy import asc, desc, func
+import numpy as np
 
 from app import app, db, lm, oid
 from config import OAUTH_PROVIDERS
@@ -37,10 +38,11 @@ def track():
     if request.method == 'GET':
         lastLift = LiftEntry.query.filter_by(user_id=g.user.id).order_by(desc(LiftEntry.id)).first()
 
-        form.lift.data = lastLift.lift
-        form.bw.data = lastLift.bw
-        form.weight.data = lastLift.weight
-        form.reps.data = lastLift.reps
+        if lastLift is not None:
+            form.lift.data = lastLift.lift
+            form.bw.data = lastLift.bw
+            form.weight.data = lastLift.weight
+            form.reps.data = lastLift.reps
 
     if form.validate_on_submit():
         newLiftEntry = LiftEntry(lift=form.lift.data,
@@ -146,6 +148,7 @@ def user_home(username):
             cur_chart['chartTitle'] = {"text": lift_choice}
             cur_chart['xAxis'] = {"categories": [str(i) for i in range(cur_lift.count())]}
             cur_chart['yAxis'] = {"title": {"text": 'Weight in ' + units}}
+            cur_chart['plotOptions'] = {}
 
             charts.append(cur_chart)
 
@@ -179,8 +182,33 @@ def user_analytics(username):
             cur_chart['chartTitle'] = {"text": "Estimated 1RM: " + lift_choice}
             cur_chart['xAxis'] = {"categories": [str(i) for i in range(cur_lift.count())]}
             cur_chart['yAxis'] = {"title": {"text": 'Weight in ' + units}}
+            cur_chart['plotOptions'] = {}
 
             charts.append(cur_chart)
+
+    # Volume by day
+    # for idx, lift_choice in enumerate(lift_choices):
+    #     cur_lift = lifts.filter_by(lift=lift_choice).order_by(asc(LiftEntry.timestamp))
+
+    #     if cur_lift.count() > 0:
+    #         oldest_date = cur_lift[0].timestamp.date().toordinal()
+    #         cur_date = datetime.utcnow().date().toordinal()
+    #         volume = [0 for i in range(cur_date - oldest_date + 1)]
+
+    #         for lift in cur_lift:
+    #             day_idx = lift.timestamp.date().toordinal() - oldest_date
+    #             volume[day_idx] += lift.weight
+
+    #         cur_chart = {}
+    #         cur_chart['chartID'] = 'chart_volume' + str(idx)
+    #         cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'column'}
+    #         cur_chart['series'] = [{"name": 'Weight', "data": volume}]
+    #         cur_chart['chartTitle'] = {"text": "Volume by day: " + lift_choice}
+    #         cur_chart['xAxis'] = {"categories": ['D' + str(i) for i in range(len(volume))]}
+    #         cur_chart['yAxis'] = {"title": {"text": 'Weight in ' + units}}
+    #         cur_chart['plotOptions'] = {}
+
+    #         charts.append(cur_chart)
 
     # Volume by day
     for idx, lift_choice in enumerate(lift_choices):
@@ -189,19 +217,39 @@ def user_analytics(username):
         if cur_lift.count() > 0:
             oldest_date = cur_lift[0].timestamp.date().toordinal()
             cur_date = datetime.utcnow().date().toordinal()
-            volume = [0 for i in range(cur_date - oldest_date + 1)]
+            volume = [[0,0,0] for i in range(cur_date - oldest_date + 1)]
+
+            # Three regimes:
+            # 75%+, 50%+, and <50%
+
+            # TODO this is garbage performance
+            maxLift = np.amax([lift.weight for lift in cur_lift])
 
             for lift in cur_lift:
                 day_idx = lift.timestamp.date().toordinal() - oldest_date
-                volume[day_idx] += lift.weight
+                if lift.weight > 0.75 * maxLift:
+                    volume[day_idx][0] += lift.weight
+                elif lift.weight > 0.5 * maxLift:
+                    volume[day_idx][1] += lift.weight
+                else:
+                    volume[day_idx][2] += lift.weight
+
+            # TODO: does highcharts work with numpy arrays?
+            def col(arr, i):
+                return [row[i] for row in arr]
 
             cur_chart = {}
-            cur_chart['chartID'] = 'chart_volume' + str(idx)
+            cur_chart['chartID'] = 'chart_volume_stacked' + str(idx)
             cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'column'}
-            cur_chart['series'] = [{"name": 'Weight', "data": volume}]
+            cur_chart['series'] = [
+                {"name": '75%+ of Max', "data": col(volume, 0)},
+                {"name": '50-75% of Max', "data": col(volume, 1)},
+                {"name": '0-50% of Max', "data": col(volume, 2)},
+                ]
             cur_chart['chartTitle'] = {"text": "Volume by day: " + lift_choice}
             cur_chart['xAxis'] = {"categories": ['D' + str(i) for i in range(len(volume))]}
             cur_chart['yAxis'] = {"title": {"text": 'Weight in ' + units}}
+            cur_chart['plotOptions'] = {"series": {"stacking": "normal"}}
 
             charts.append(cur_chart)
 
@@ -210,17 +258,21 @@ def user_analytics(username):
                            user=user,
                            charts=charts)
 
-@app.route('/user/<username>/placeholder2')
+@app.route('/user/<username>/workouts')
 @login_required
-def user_placeholder2(username):
+def user_workouts(username):
     user = User.query.filter_by(username=username).first()
     if user == None:
         flash('User %s not found.' % username)
         return redirect(url_for('index'))
 
-    return render_template('user_placeholder2.html',
-                           title='Placeholder 2',
-                           user=user)
+    lifts = user.lifts
+    units = user.units
+
+    return render_template('user_workouts.html',
+                           title='Workouts',
+                           user=user,
+                           lifts=lifts)
 
 @app.route('/user/<username>/settings', methods=['GET', 'POST'])
 @login_required
