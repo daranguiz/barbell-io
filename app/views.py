@@ -32,6 +32,16 @@ def index():
 @login_required
 def track():
     form = TrackSetForm()
+
+    # Prefill with last entry
+    if request.method == 'GET':
+        lastLift = LiftEntry.query.filter_by(user_id=g.user.id).order_by(desc(LiftEntry.id)).first()
+
+        form.lift.data = lastLift.lift
+        form.bw.data = lastLift.bw
+        form.weight.data = lastLift.weight
+        form.reps.data = lastLift.reps
+
     if form.validate_on_submit():
         newLiftEntry = LiftEntry(lift=form.lift.data,
                                  bw=form.bw.data,
@@ -190,7 +200,7 @@ def user_analytics(username):
             cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'column'}
             cur_chart['series'] = [{"name": 'Weight', "data": volume}]
             cur_chart['chartTitle'] = {"text": "Volume by day: " + lift_choice}
-            cur_chart['xAxis'] = {"categories": ['D ' + str(i) for i in range(len(volume))]}
+            cur_chart['xAxis'] = {"categories": ['D' + str(i) for i in range(len(volume))]}
             cur_chart['yAxis'] = {"title": {"text": 'Weight in ' + units}}
 
             charts.append(cur_chart)
