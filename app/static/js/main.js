@@ -6,6 +6,7 @@ $(document).ready(function() {
             title: title[i],
             xAxis: xAxis[i],
             yAxis: yAxis[i],
+            plotOptions: plotOptions[i],
             series: series[i]
         });
     }
