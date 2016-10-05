@@ -175,12 +175,22 @@ def user_analytics(username):
         cur_lift = lifts.filter_by(lift=lift_choice)
 
         if cur_lift.count() > 0:
+            oldest_date = cur_lift[0].timestamp.date().toordinal()
+            cur_date = datetime.utcnow().date().toordinal()
+            maxes = [0 for i in range(int((cur_date - oldest_date + 1) / 7))]
+
+            for lift in cur_lift:
+                week_idx = int((lift.timestamp.date().toordinal() - oldest_date) / 7)
+                cur_max = estimate_1rm_epley(lift.weight, lift.reps)
+                if (cur_max > maxes[week_idx]):
+                    maxes[week_idx] = cur_max
+
             cur_chart = {}
             cur_chart['chartID'] = 'chart_1rm' + str(idx)
             cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'spline'}
-            cur_chart['series'] = [{"name": 'Weight', "data": [estimate_1rm_epley(lift.weight, lift.reps) for lift in cur_lift]}]
-            cur_chart['chartTitle'] = {"text": "Estimated 1RM: " + lift_choice}
-            cur_chart['xAxis'] = {"categories": [str(i) for i in range(cur_lift.count())]}
+            cur_chart['series'] = [{"name": 'Weight', "data": maxes}]
+            cur_chart['chartTitle'] = {"text": "Estimated 1RM by week: " + lift_choice}
+            cur_chart['xAxis'] = {"categories": ['W' + str(i) for i in range(len(maxes))]}
             cur_chart['yAxis'] = {"title": {"text": 'Weight in ' + units}}
             cur_chart['plotOptions'] = {}
 
@@ -211,6 +221,7 @@ def user_analytics(username):
     #         charts.append(cur_chart)
 
     # Volume by week
+    # TODO: saturate at 26 weeks, not some max num of weeks
     for idx, lift_choice in enumerate(lift_choices):
         cur_lift = lifts.filter_by(lift=lift_choice).order_by(asc(LiftEntry.timestamp))
 
