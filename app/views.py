@@ -227,12 +227,13 @@ def user_analytics(username):
 
             for lift in cur_lift:
                 day_idx = lift.timestamp.date().toordinal() - oldest_date
+                set_volume = lift.weight * lift.reps
                 if lift.weight > 0.75 * maxLift:
-                    volume[day_idx][0] += lift.weight
+                    volume[day_idx][0] += set_volume
                 elif lift.weight > 0.5 * maxLift:
-                    volume[day_idx][1] += lift.weight
+                    volume[day_idx][1] += set_volume
                 else:
-                    volume[day_idx][2] += lift.weight
+                    volume[day_idx][2] += set_volume
 
             # TODO: does highcharts work with numpy arrays?
             def col(arr, i):
