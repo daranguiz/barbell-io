@@ -222,7 +222,7 @@ def user_analytics(username):
             # Three regimes:
             # 75%+, 50%+, and <50%
 
-            # TODO this is garbage performance
+            # TODO this is garbage performance, should be a SQL query
             maxLift = np.amax([lift.weight for lift in cur_lift])
 
             for lift in cur_lift:

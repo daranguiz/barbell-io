@@ -70,4 +70,4 @@ class LiftEntry(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
-        return '<LiftEntry %dx%d %s>' % (self.weight, self.reps, self.name)
+        return '<LiftEntry %dx%d %s>' % (self.weight, self.reps, self.lift)
