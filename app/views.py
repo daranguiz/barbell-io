@@ -210,14 +210,14 @@ def user_analytics(username):
 
     #         charts.append(cur_chart)
 
-    # Volume by day
+    # Volume by week
     for idx, lift_choice in enumerate(lift_choices):
         cur_lift = lifts.filter_by(lift=lift_choice).order_by(asc(LiftEntry.timestamp))
 
         if cur_lift.count() > 0:
             oldest_date = cur_lift[0].timestamp.date().toordinal()
             cur_date = datetime.utcnow().date().toordinal()
-            volume = [[0,0,0] for i in range(cur_date - oldest_date + 1)]
+            volume = [[0,0,0] for i in range(int((cur_date - oldest_date + 1) / 7))]
 
             # Three regimes:
             # 75%+, 50%+, and <50%
@@ -226,7 +226,7 @@ def user_analytics(username):
             maxLift = np.amax([lift.weight for lift in cur_lift])
 
             for lift in cur_lift:
-                day_idx = lift.timestamp.date().toordinal() - oldest_date
+                day_idx = int((lift.timestamp.date().toordinal() - oldest_date) / 7)
                 set_volume = lift.weight * lift.reps
                 if lift.weight > 0.75 * maxLift:
                     volume[day_idx][0] += set_volume
@@ -239,6 +239,7 @@ def user_analytics(username):
             def col(arr, i):
                 return [row[i] for row in arr]
 
+            # TODO: this should be your max at the time, not your current max
             cur_chart = {}
             cur_chart['chartID'] = 'chart_volume_stacked' + str(idx)
             cur_chart['chart'] = {"renderTo": 'chartID_' + str(idx), "type": 'column'}
@@ -247,8 +248,8 @@ def user_analytics(username):
                 {"name": '50-75% of Max', "data": col(volume, 1)},
                 {"name": '0-50% of Max', "data": col(volume, 2)},
                 ]
-            cur_chart['chartTitle'] = {"text": "Volume by day: " + lift_choice}
-            cur_chart['xAxis'] = {"categories": ['D' + str(i) for i in range(len(volume))]}
+            cur_chart['chartTitle'] = {"text": "Volume by week: " + lift_choice}
+            cur_chart['xAxis'] = {"categories": ['W' + str(i) for i in range(len(volume))]}
             cur_chart['yAxis'] = {"title": {"text": 'Weight in ' + units}}
             cur_chart['plotOptions'] = {"series": {"stacking": "normal"}}
 
