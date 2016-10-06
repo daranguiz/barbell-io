@@ -287,6 +287,28 @@ def user_workouts(username):
                            user=user,
                            lifts=lifts)
 
+
+# TODO: this is bad
+@app.route('/user/<username>/workouts/delete/<lift_id>')
+@login_required
+def user_workouts_delete(username, lift_id):
+    user = User.query.filter_by(username=username).first()
+    if user == None:
+        flash('User %s not found.' % username)
+        return redirect(url_for('user_workouts', user=username))
+
+    if user.id != g.user.id:
+        flash('No deleting data that\'s not yours!')
+        return redirect(url_for('user_workouts', user=username))
+
+    liftToDelete = LiftEntry.query.filter_by(id=lift_id)
+    if liftToDelete is not None:
+        liftToDelete.delete()
+        db.session.commit()
+
+    return redirect(url_for('user_workouts', username=username))
+
+
 @app.route('/user/<username>/settings', methods=['GET', 'POST'])
 @login_required
 def user_settings(username):
