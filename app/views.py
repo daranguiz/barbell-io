@@ -289,6 +289,7 @@ def user_workouts(username):
 
 
 # TODO: this is bad
+# TODO: who should this redirect to, username or g.user.username?
 @app.route('/user/<username>/workouts/delete/<lift_id>')
 @login_required
 def user_workouts_delete(username, lift_id):
@@ -302,12 +303,12 @@ def user_workouts_delete(username, lift_id):
     if liftToDelete.first() is not None:
         if liftToDelete.first().user_id != g.user.id:
             flash('No deleting data that\'s not yours!')
-            return redirect(url_for('user_workouts', username=g.user.username))
+            return redirect(url_for('user_workouts', username=username))
         else:
             liftToDelete.delete()
             db.session.commit()
 
-    return redirect(url_for('user_workouts', username=g.user.username))
+    return redirect(url_for('user_workouts', username=username))
 
 
 @app.route('/user/<username>/workouts/edit/<lift_id>', methods=['GET', 'POST'])
@@ -320,7 +321,7 @@ def user_workouts_edit():
 
     if user.id != g.user.id:
         flash('No deleting data that\'s not yours!')
-        return redirect(url_for('user_workouts', username=g.user.username))
+        return redirect(url_for('user_workouts', username=username))
 
     liftToDelete = LiftEntry.query.filter_by(id=lift_id)
     # if liftToDelete is not None:
