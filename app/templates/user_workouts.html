@@ -8,7 +8,7 @@
 {% for lift in lifts %}
     <div>
         <a href="{{ url_for('user_workouts_delete', username=user.username, lift_id=lift.id) }}">delete</a>
-        <a href="#">edit</a>
+        <a href="{{ url_for('user_workouts_edit', username=user.username, lift_id=lift.id) }}">edit</a>
         {{ lift.weight }}x{{ lift.reps }} {{ lift.lift}}
     </div>
 {% endfor %}

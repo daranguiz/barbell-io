@@ -313,7 +313,7 @@ def user_workouts_delete(username, lift_id):
 
 @app.route('/user/<username>/workouts/edit/<lift_id>', methods=['GET', 'POST'])
 @login_required
-def user_workouts_edit():
+def user_workouts_edit(username, lift_id):
     user = User.query.filter_by(username=username).first()
     if user == None:
         flash('User %s not found.' % username)
@@ -323,36 +323,33 @@ def user_workouts_edit():
         flash('No deleting data that\'s not yours!')
         return redirect(url_for('user_workouts', username=username))
 
-    liftToDelete = LiftEntry.query.filter_by(id=lift_id)
-    # if liftToDelete is not None:
-
-    # else:
-
-
-
     form = TrackSetForm()
+    liftQueryToEdit = LiftEntry.query.filter_by(id=lift_id)
+    liftToEdit = liftQueryToEdit.first()
 
-    # Prefill with last entry
-    lastLift = LiftEntry.query.filter_by(user_id=g.user.id).order_by(desc(LiftEntry.id)).first()
-
-    if lastLift is not None:
-        form.lift.data = lastLift.lift
-        form.bw.data = lastLift.bw
-        form.weight.data = lastLift.weight
-        form.reps.data = lastLift.reps
-
+    # do this first so you don't overwrite form
     if form.validate_on_submit():
-        newLiftEntry = LiftEntry(lift=form.lift.data,
-                                 bw=form.bw.data,
-                                 weight=form.weight.data,
-                                 reps=form.reps.data,
-                                 timestamp=datetime.utcnow(),
-                                 user_id=g.user.id)
-        db.session.add(newLiftEntry)
+        liftToEdit.lift = form.lift.data
+        liftToEdit.bw = form.bw.data
+        liftToEdit.weight = form.weight.data
+        liftToEdit.reps = form.reps.data
+
+        db.session.add(liftToEdit)
         db.session.commit()
         flash('Your lift has been saved!')
-        return redirect(url_for('track'))
-    return render_template('track.html', form=form, title='Track')
+        return redirect(url_for('user_workouts', username=username))
+
+    if liftToEdit is not None:
+        if liftToEdit.user_id != g.user.id:
+            flash('No deleting data that\'s not yours!')
+            return redirect(url_for('user_workouts', username=username))
+        else:
+            form.lift.data = liftToEdit.lift
+            form.bw.data = liftToEdit.bw
+            form.weight.data = liftToEdit.weight
+            form.reps.data = liftToEdit.reps
+
+    return render_template('track.html', form=form, title='Edit Workout')
 
 
 @app.route('/user/<username>/settings', methods=['GET', 'POST'])
