@@ -295,11 +295,11 @@ def user_workouts_delete(username, lift_id):
     user = User.query.filter_by(username=username).first()
     if user == None:
         flash('User %s not found.' % username)
-        return redirect(url_for('user_workouts', user=username))
+        return redirect(url_for('user_workouts', username=username))
 
     if user.id != g.user.id:
         flash('No deleting data that\'s not yours!')
-        return redirect(url_for('user_workouts', user=username))
+        return redirect(url_for('user_workouts', username=username))
 
     liftToDelete = LiftEntry.query.filter_by(id=lift_id)
     if liftToDelete is not None:
