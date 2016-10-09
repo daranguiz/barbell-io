@@ -1,5 +1,5 @@
 from flask import render_template, make_response, flash, redirect, session, url_for, request, g
-from flask.ext.login import login_user, logout_user, current_user, login_required
+from flask_login import login_user, logout_user, current_user, login_required
 from authomatic.adapters import WerkzeugAdapter
 from authomatic import Authomatic
 from datetime import datetime
