@@ -13,6 +13,8 @@ To run, you need [python3](https://docs.python.org/3/).
 
 - Install dependencies via `pip install -r requirements.txt`.
 - Run `./manage.py runsever -d` to run a development server.
+    - Run `./manage.py liveserver` to run a live-reloading development server
+      (requires a [browser plugin](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei?hl=en)).
 
 ## TODO
 

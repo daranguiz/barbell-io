@@ -18,6 +18,7 @@ flipflop==1.0
 guess-language==0.2
 itsdangerous==0.24
 Jinja2==2.8
+livereload==2.4.1
 MarkupSafe==0.23
 numpy==1.11.2
 pbr==1.10.0
